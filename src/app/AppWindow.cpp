@@ -6,6 +6,7 @@
 
 AppWindow::AppWindow(QWidget *parent) {
 
+    qDebug("Hello World");
 }
 
 
