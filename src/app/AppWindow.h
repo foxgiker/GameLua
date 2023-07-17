@@ -6,8 +6,6 @@
 #define GAMELUA_APPWINDOW_H
 
 #include <QMainWindow>
-#include "lua.h"
-
 
 class AppWindow : public QMainWindow {
     Q_OBJECT
