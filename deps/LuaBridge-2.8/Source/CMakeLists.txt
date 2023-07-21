@@ -10,7 +10,7 @@ set(LUABRIDGE_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/LuaBridge/Array.h
 )
 
-source_group("LuaBridge" FILES ${LUABRIDGE_HEADERS})
+
 
 set(LUABRIDGE_DETAIL_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/LuaBridge/detail/CFunctions.h
@@ -30,10 +30,10 @@ set(LUABRIDGE_DETAIL_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/LuaBridge/detail/Userdata.h
 )
 
-source_group("LuaBridge\\detail" FILES ${LUABRIDGE_DETAIL_HEADERS})
+
 
 add_library(LuaBridge INTERFACE)
-
+# 定义一个源目标，方便别的项目引用这些源码/
 target_sources(LuaBridge INTERFACE
     ${LUABRIDGE_HEADERS}
     ${LUABRIDGE_DETAIL_HEADERS}
@@ -45,9 +45,10 @@ if(LUABRIDGE_CXX17)
     target_compile_definitions(LuaBridge INTERFACE LUABRIDGE_CXX17)
 endif()
 
-if(MSVC AND CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
-    add_custom_target(LuaBridgeSources SOURCES
-        ${LUABRIDGE_HEADERS}
-        ${LUABRIDGE_DETAIL_HEADERS}
-    )
-endif()
+# IDE属性设置
+source_group("LuaBridge\\detail" FILES ${LUABRIDGE_DETAIL_HEADERS})
+source_group("LuaBridge" FILES ${LUABRIDGE_HEADERS})
+set_target_properties(Lua54
+        PROPERTIES
+        FOLDER
+        "deps")

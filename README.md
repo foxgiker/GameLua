@@ -26,6 +26,19 @@ GameLua
 
 本文就是基于以上两条规则组织构建的,其他的编译选项等细节可以在后面接触到的时候再继续学习
 
+#### todolist:
+
+- 
+- Cmake 在windows下通过CMAKE_BUILD_TYPE 区分Debug 和 Releaseb版本，加载不同的静态库
+- 实现tesseract ocr 功能，识别图片中的文字
+- 使用OpenCV进行简单的图片处理，二值化等
+- 获取系统进程、指定区域内屏幕截图、屏幕位图位置查找
+- 实现directX 拦截注入
+- 用lua脚本实现屏幕控制： 锁定窗口位置，屏幕截取，鼠标键盘事件模拟
+
+
+
+
 
 #### Cmake添加qt依赖
 
@@ -174,6 +187,54 @@ target_link_libraries(GameLua PRIVATE LuaBridge)
 ```
 注意： 这里只需要使用 target_link_libraries来链接目标即可，不需要再使用 target_include_directories来添加头文件，
 因为在定义目标的时候 已经包含了。 另外需要注意的是链接的目标名 跟实际的文件夹的名字无关。
+
+
+#### Cmake 整合openCV
+
+从官网下载OpenCV – 4.8.0 的windows安装包。https://opencv.org/releases/
+下载的文件表面是exe文件，其实就是个压缩包，双击运行后，会解压到当前目录下的opencv文件夹，该文件夹下的build目录
+即为opencv的预编译文件目录，目录结构如下
+
+```html
+build
+    |-bin
+    |-etc
+    |-include
+    |-java
+    |-python
+    |-x64
+    |-OpenCVConfig.cmake
+```
+
+直接复制x64、include文件夹、OpenCVConfig.cmake文件到本项目deps/OpenCV-4.8.0目录下即可
+
+在需要调用opencv库的时候， 直接include   OpenCVConfig.cmake 文件就行了,需要的变量直接就有了。
+
+不再需要使用 find_package了
+```cmake
+include(${CMAKE_SOURCE_DIR}/deps/OpenCV-4.8.0/OpenCVConfig.cmake)
+message("opencv libs -->" ${OpenCV_INCLUDE_DIRS})
+```
+
+
+#### Cmake 整合 TesseractORC
+
+这是一个从图片中识别文字的库类，如果需要支持C++17 则需要自己编译源码。 这里直接下载windows下的安装包
+https://github.com/UB-Mannheim/tesseract/wiki
+
+
+下载相关语言的训练数据： https://tesseract-ocr.github.io/tessdoc/Data-Files.html
+
+#### SW 包管理工具
+
+以前使用vcpkg管理cpp依赖，现在很多项目又流行用SW了 （https://software-network.org/client/）
+
+
+
+
+
+
+
 
 
 

@@ -6,6 +6,10 @@
 #include "AppWindow.h"
 #include "lua.hpp"
 
+#include <leptonica/allheaders.h>
+#include <opencv2/opencv.hpp>
+#include <string>
+#include <tesseract/baseapi.h>
 
 lua_State * LUA;
 
@@ -20,13 +24,7 @@ lua_State * LUA;
     return sum;
 }
 
-
-int main(int argc, char *argv[])
-{
-    QApplication a(argc, argv);
-    AppWindow app;
-    app.show();
-
+void testLua(){
     // Qt调用lua脚本
     LUA = luaL_newstate(); // 新建lua解释器
     luaL_openlibs(LUA); //载入lua基础库
@@ -35,5 +33,38 @@ int main(int argc, char *argv[])
     int sum = luaAdd(10, 20);
     qDebug() << "sum: " << sum;
     lua_close(LUA);
+ }
+
+void testTesseract(){
+    char *outText;
+
+    tesseract::TessBaseAPI *api = new tesseract::TessBaseAPI();
+    // Initialize tesseract-ocr with English, without specifying tessdata path
+    if (api->Init(NULL, "eng")) // you can set tessdata path and language here
+    {
+        fprintf(stderr, "Could not initialize tesseract.\n");
+        exit(1);
+    }
+
+    // Open input image with leptonica library
+    Pix *image = pixRead("./eurotext.tif");
+    api->SetImage(image);
+    // Get OCR result
+    outText = api->GetUTF8Text();
+    printf("---- OCR output:---- \n%s", outText);
+
+    // Destroy used object and release memory
+    api->End();
+    delete[] outText;
+    pixDestroy(&image);
+ }
+
+int main(int argc, char *argv[])
+{
+    QApplication a(argc, argv);
+    AppWindow app;
+    app.show();
+
+
     return a.exec();
 }

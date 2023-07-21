@@ -6,10 +6,10 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
+
 add_executable(GameLua main.cpp AppWindow.cpp AppWindow.h)
 
-
-target_link_libraries(GameLua PRIVATE  Qt6 LuaBridge Lua54)
+target_link_libraries(GameLua PRIVATE  Qt6 LuaBridge Lua54 opencv_48 leptonica_184 tesseract_532)
 
 
 # 指定生成目录，方便后期调试
