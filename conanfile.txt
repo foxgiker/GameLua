@@ -1,0 +1,15 @@
+[requires]
+lua/5.4.6
+leptonica/1.82.0
+tesseract/4.1.1
+
+[generators]
+CMakeDeps
+CMakeToolchain
+
+
+[options]
+lua*:shared=False
+
+[layout]
+cmake_layout

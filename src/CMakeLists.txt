@@ -1,6 +1,5 @@
 
-
-add_subdirectory(luaengine)
+add_subdirectory(gm)
 add_subdirectory(app)
 
 
