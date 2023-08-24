@@ -67,8 +67,8 @@ namespace gm{
         GetWindowTextA(hwnd, lpWindowName, nMaxCount);
         GetClassNameA(hwnd, lpClassName, nMaxCount);
 
-        std::cout << "[Child window] window handle: " << hwnd << " window name: "
-                  << lpWindowName << " class name " << lpClassName <<std::endl;
+//        std::cout << "window handle: " << hwnd << " window name: "
+//                  << lpWindowName << " class name " << lpClassName <<std::endl;
 
         WindowCtrl ctrl {hwnd,hwnd,szTitle,szClass};
         auto that =  reinterpret_cast<WindowMgr*>(lParam);
@@ -98,5 +98,11 @@ namespace gm{
         EnumChildWindows(hwnd,&WindowMgr::EnumChildProc, reinterpret_cast<LPARAM>(this));
     }
 
+
+    QList<WindowCtrl> WindowMgr::QueryWindows() {
+        controls.clear();
+        EnumWindows(&WindowMgr::EnumChildProc,reinterpret_cast<LPARAM>(this));
+        return controls;
+    }
 
 }

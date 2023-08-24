@@ -3,7 +3,6 @@
 */
 
 #include <QApplication>
-#include "AppWindow.h"
 #include "ui/AppMain.h"
 
 //#include "lua.hpp"

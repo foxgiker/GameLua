@@ -64,7 +64,11 @@ cv::Mat gm::CVHelper::createMat(HBITMAP hBmp) {
         LPBYTE pdest = area + pbmi->bmiHeader.biSizeImage - (i+1) * dLine;
         CopyMemory(pdest,psrc,dLine);
     }
-    cv::Mat img(cv::Size(pbmi->bmiHeader.biWidth, pbmi->bmiHeader.biHeight),CV_8UC(_cClrBits / 8), area,wb);
+    qDebug() << "bits: " << _cClrBits;
+    // windwos系统下的api截图都是4通道的
+    cv::Mat img(cv::Size(pbmi->bmiHeader.biWidth, pbmi->bmiHeader.biHeight),CV_8UC(_cClrBits /8), area,wb);
+    // 为了跟系统的截图工具等保持一致，移除透明度， 这里可能有点风险，因为不同的电脑api截图不一定都是4通道的， 先这样吧
+    cv::cvtColor(img,img,cv::COLOR_RGBA2BGR);
     LocalFree(pbmi);
     LocalFree(_lpBits);
     // area 被mat接管， 不用释放，否则会有bug
@@ -97,6 +101,11 @@ cv::Mat gm::CVHelper::capturePic(HWND hwnd, int x, int y, int width, int height)
 cv::Mat gm::CVHelper::captureClient(HWND hwnd) {
 
     if(hwnd == nullptr) hwnd = GetDesktopWindow();
+    HWND topHwnd = GetForegroundWindow();
+    if(hwnd != topHwnd){
+        SetWindowPos(hwnd,HWND_TOP,0,0,0,0,SWP_NOSIZE | SWP_NOMOVE |SWP_SHOWWINDOW);
+        SetActiveWindow(hwnd);
+    }
 
     RECT rect; //窗口区域举行
     GetClientRect(hwnd,&rect);
@@ -104,16 +113,18 @@ cv::Mat gm::CVHelper::captureClient(HWND hwnd) {
     int width = rect.right - rect.left;
     int height = rect.bottom - rect.top;
 
-    qDebug() << width << "," << height;
+    qDebug() <<"captureClient屏幕取图大小：" << width << "," << height;
     auto img =  capturePic(hwnd,0,0,width,height);
     return img;
 }
 
-gm::Point gm::CVHelper::findPicPos(HWND hwnd, cv::Mat t) {
+POINT gm::CVHelper::findPicPos(HWND hwnd, cv::Mat t) {
     auto p = captureClient(hwnd);
+    cv::Mat image_matched;
+
     cv::imwrite("p.bmp",p);
     cv::imwrite("t.bmp",t);
-    cv::Mat image_matched;
+
     cv::matchTemplate(p,t,image_matched,cv::TM_CCOEFF_NORMED);
 
     double minVal, maxVal;
@@ -123,7 +134,7 @@ gm::Point gm::CVHelper::findPicPos(HWND hwnd, cv::Mat t) {
 
     qDebug() << "最佳匹配位置： " << maxLoc.x << "," << maxLoc.y;
     qDebug() << "最差匹配位置： " << minLoc.x << "," << minLoc.y;
-    gm::Point point{maxLoc.x,maxLoc.y};
+    POINT point{maxLoc.x,maxLoc.y};
     return point;
 
     // 把找到的位置圈起来

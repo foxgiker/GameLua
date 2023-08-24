@@ -7,22 +7,33 @@
 
 #include <QObject>
 #include <QDebug>
+#include <QFileInfo>
+#include <QCoreApplication>
 #include <Windows.h>
-#include <WinIoMgr.h>
+#include <KeyMouseMgr.h>
+#include "LuaControl.h"
 #include "lua.hpp"
 #include "LuaBridge/LuaBridge.h"
 
 
-void test(int hwnd,int code);
-
-class LuaRunner: public QObject {
+class LuaRunner: public QThread  {
 
 private:
     lua_State * _L;   // lua执行器
+    uint _hwnd;          // 游戏窗口
+    HANDLE _hProcess = NULL ;  //  游戏的窗口所属进程
+    HANDLE _hThread = NULL ;    // 注入所用的远程线程
+    HANDLE _hToken = NULL;      // 提权时使用的令牌句柄
+    LPVOID _lpPathAddr = NULL;  // 远程进程中分配的空间地址
+    void doBind();
+    void runLua();
+    BOOL EnableDebugPrivilege();
+protected:
+    void run() override ;
 public:
-    LuaRunner(HWND hwnd,QString szFile,QObject* parent);
+    LuaRunner(uint hwnd,QString szFile,QObject* parent);
     ~LuaRunner();
-    void run();
+    void InjectWindowProcess(HWND hnd);
 };
 
 

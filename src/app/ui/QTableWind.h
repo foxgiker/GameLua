@@ -16,6 +16,7 @@
 #include "LuaRunner.h"
 #include "OCRHelper.h"
 #include "WindowMgr.h"
+#include "Global.h"
 
 
 class QTableWind : public QTableWidget{
@@ -31,7 +32,7 @@ public:
     ~QTableWind();
 
 public slots:
-    void cellDBClick(int row,int col);
+    void cellDBClick(int row, int col);
 signals:
     void log(LOG_TYPE,QString msg);
 };

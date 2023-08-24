@@ -10,10 +10,6 @@
 #include <opencv2/opencv.hpp>
 
 namespace gm {
-    struct Point{
-        int x;
-        int y;
-    };
 
     class CVHelper {
     private:
@@ -25,7 +21,7 @@ namespace gm {
         // 整个窗口截图
         static cv::Mat captureClient(HWND hwnd = nullptr);
         // 查找图片在窗口图片中的位置。
-        static Point findPicPos(HWND hwnd,cv::Mat);
+        static POINT findPicPos(HWND hwnd,cv::Mat);
 
     };
 

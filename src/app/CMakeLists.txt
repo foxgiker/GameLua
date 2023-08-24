@@ -7,7 +7,7 @@ set(DEST_PATH "${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}")
 
 
 
-add_executable(GameLua  main.cpp AppWindow.cpp AppWindow.h
+add_executable(GameLua  main.cpp
         ui/Config.h
         ui/AppMain.h
         ui/AppMain.cpp

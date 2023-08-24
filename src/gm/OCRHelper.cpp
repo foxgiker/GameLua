@@ -9,7 +9,7 @@
 gm::OCRHelper::OCRHelper() {
 
     _ocr = new tesseract::TessBaseAPI();
-    _ocr->Init("./data", "chi_sim_vert");
+    _ocr->Init("./data", "chi");
     _ocr->SetPageSegMode(tesseract::PSM_SINGLE_LINE);
 }
 

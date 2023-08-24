@@ -9,7 +9,7 @@ set(CMAKE_C_STANDARD 99)
 set(ENV{qt_DIR} D:/Qt/6.5.1/msvc2019_64/lib/cmake)
 set(ENV{OpenCV_DIR} D:/cpp-repository/opencv-4.8.0/build)
 set(ENV{WinIo_DIR} ${CMAKE_SOURCE_DIR}/deps/winio)
-#set(ENV{path} "$ENV(path);D:/cpp-repository/opencv-4.8.0/build/x64/vc16/bin")
+
 
 add_definitions(-DLUA_USE_DLOPEN)
 

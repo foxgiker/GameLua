@@ -19,15 +19,30 @@ QTableWind::~QTableWind(){
 
 void QTableWind::cellDBClick(int row,int col) {
     emit log(LOG_TYPE::LOG_INFO,QString("点击了 %1行 %2 列").arg(row).arg(col));
-    HWND hnd =  FindWindow(NULL,L"Element Client");
+    //HWND hnd =  FindWindow(NULL,L"Element Client");
+    //HWND hnd =  FindWindow(NULL,L"无标题 - 记事本");
+    //qDebug() <<"hnd: " << hnd;
+
+    auto windows = sWindowMgr.QueryWindows();
+    const QString title="블레이드 & 소울 2";
+    auto win = std::find_if(windows.begin(),windows.end(),[](gm::WindowCtrl c){return c.title.contains("블레이드 & 소울 2");});
+    HWND hnd = win->hwnd;
+
     qDebug() <<"hnd: " << hnd;
 
 
-    //sWindowMgr.EnumWindowCtrls(hnd);
-    // 开启线程执行脚本
+    if(gb::windows.contains(hnd)){
+        auto thread = (LuaRunner*) gb::windows[hnd];
+        thread->start();
+    }else{
+        LuaRunner* luaRunner = new LuaRunner((unsigned int)hnd,QString("./lua/test.lua"),this);
+        gb::windows.insert(hnd,(unsigned long long )luaRunner);
+        luaRunner->start();
+    }
 
-    LuaRunner luaRunner(hnd,QString("./lua/test.lua"),this);
-    luaRunner.run();
+
+
+
 
 //    auto t = gm::CVHelper::capturePic(GetDesktopWindow(),55,10,32,20);
 //    cv::imwrite("t.bmp",t);

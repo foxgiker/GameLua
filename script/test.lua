@@ -1,9 +1,14 @@
 
 
+local ctrl = wm.ctrl(hwnd)
 
 function run()
-    print(hwnd)
-    print(vk_w)
-    wm.keyDown(hwnd,vk_w)
 
-end;
+--     p = ctrl:findPicsPosScreen('./data/t2.png');
+--     print(p.x);
+--     ctrl:mouseMoveToPointClick(p.x,p.y);
+
+    ctrl:keyDown(VK_W)
+    ctrl:sleep(5)
+    ctrl:keyUp(VK_W)
+end

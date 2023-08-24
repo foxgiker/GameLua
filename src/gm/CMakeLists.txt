@@ -5,18 +5,22 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
 
-add_library(gm STATIC WindowMgr.cpp WinIoMgr.h WinIoMgr.cpp WinIoMgr.cpp WinIoMgr.cpp ScreenMgr.h ScreenMgr.cpp
+add_library(gm STATIC WindowMgr.cpp KeyMouseMgr.h KeyMouseMgr.cpp KeyMouseMgr.cpp KeyMouseMgr.cpp ScreenMgr.h ScreenMgr.cpp
         OCRHelper.h
         OCRHelper.cpp
         BitMapMem.h
         BitMapMem.cpp
         LuaRunner.h
         LuaRunner.cpp
-        LuaRegister.h
-        LuaRegister.cpp
         CVHelper.h
         CVHelper.h
-        CVHelper.cpp)
+        CVHelper.cpp
+        LuaControl.h
+        LuaControl.cpp
+        LuaControl.cpp
+        Global.h
+        Global.h
+)
 
 
 
@@ -36,14 +40,10 @@ message("Tesseract Version: ${Tesseract_VERSION_STRING}")
 FIND_PACKAGE(OpenCV REQUIRED)
 message("OpenCV Version: ${OpenCV_VERSION}")
 
-find_package(WinIo REQUIRED)
-message("WinIo include: ${WinIo_INCLUDE_DIRS}")
-message("WinIo lib: ${WinIo_LIBRARIES}")
 
 
 
 target_link_libraries(gm PUBLIC
-        ${WinIo_LIBRARIES}
         ${OpenCV_LIBS}
         ${Leptonica_LIBRARIES}
         ${Tesseract_LIBRARIES}
@@ -52,7 +52,6 @@ target_link_libraries(gm PUBLIC
         Qt6::Core Qt6::Widgets)
 
 target_include_directories(gm PUBLIC .
-        ${WinIo_INCLUDE_DIRS}
         ${lua_INCLUDE_DIRS}
         ${Leptonica_INCLUDE_DIRS}
         ${Tesseract_INCLUDE_DIRS}
