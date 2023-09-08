@@ -9,7 +9,8 @@
 #include <QDebug>
 #include <QFileInfo>
 #include <QCoreApplication>
-#include <Windows.h>
+#include <windows.h>
+#include <tchar.h>
 #include <KeyMouseMgr.h>
 #include "LuaControl.h"
 #include "lua.hpp"
@@ -34,6 +35,8 @@ public:
     LuaRunner(uint hwnd,QString szFile,QObject* parent);
     ~LuaRunner();
     void InjectWindowProcess(HWND hnd);
+    void inject_DLL(TCHAR *dllPath, HANDLE process);
+    void testInject();
 };
 
 

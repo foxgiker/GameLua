@@ -89,6 +89,93 @@ BOOL LuaRunner::EnableDebugPrivilege() {
     return fOk;
 }
 
+void LuaRunner::inject_DLL(TCHAR *dllPath, HANDLE process) {
+    /*
+** Variable declarations
+*/
+    LPVOID lpBaseAddress;
+    HANDLE hRemoteThread;
+    HMODULE kernel32;
+    FARPROC loadlibrary;
+    SIZE_T pathLen;
+
+/*
+** Initialize variables
+*/
+    lpBaseAddress= NULL;
+    hRemoteThread= NULL;
+    loadlibrary= NULL;
+    kernel32= NULL;
+    pathLen= _tcslen(dllPath) * sizeof(TCHAR);
+
+    kernel32= GetModuleHandle(_T("kernel32.dll"));
+    loadlibrary= GetProcAddress(kernel32, reinterpret_cast<LPCSTR>("LoadLibraryA"));
+
+
+/*
+** Allocate memory and write the dll path that will be injected
+*/
+    lpBaseAddress= VirtualAllocEx(process, NULL, pathLen, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+    if (lpBaseAddress == NULL)
+        std::cout << "VirtualAllocEx failed: " << GetLastError() << "\n";
+
+    if (!WriteProcessMemory(process, lpBaseAddress, dllPath, pathLen, NULL))
+        std::cout << "WriteProcessMemory failed: " << GetLastError() << "\n";
+
+/*
+** Create a thread that will load the dll path using LoadLibrary as a start up routine
+*/
+    hRemoteThread= CreateRemoteThread(process, NULL, 0, (LPTHREAD_START_ROUTINE)(VOID *)loadlibrary, lpBaseAddress, NULL, 0);
+    if (hRemoteThread == NULL)
+        std::cout << "CreateRemoteThread failed: " << GetLastError() << "\n";
+
+/*
+** Clean up
+*/
+    WaitForSingleObject(hRemoteThread, INFINITE);
+    CloseHandle(hRemoteThread);
+}
+
+
+void LuaRunner::testInject() {
+    /*
+** Variable declarations
+*/
+    STARTUPINFO si;
+    PROCESS_INFORMATION pi;
+    SIZE_T pathLen;
+
+    char * targetExe= QString("C:/Windows/System32/notepad.exe").toStdString().c_str();
+    const char * dllName= QString("E:/mygithub/GameLua/build/bin/Debug/gg.dll").toStdString().c_str();
+
+
+    ZeroMemory( &si, sizeof(si));
+    ZeroMemory( &pi, sizeof(pi));
+    si.cb = sizeof(si);
+
+/*
+** Create the process as suspended - main thread created but no DLLs loaded
+*/
+    if(!CreateProcessA(NULL, targetExe, NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, &pi))
+    {
+        std::cout << "CreateProcess failed: " << GetLastError() << "\n";
+        return ;
+    }
+
+/*
+** inject the process that we created
+*/
+    inject_DLL(dllPath, pi.hProcess);
+
+/*
+** Resume the suspended process now with our DLL injected
+*/
+    ResumeThread(pi.hThread);
+    WaitForSingleObject( pi.hProcess, INFINITE );
+    CloseHandle( pi.hProcess );
+    CloseHandle( pi.hThread );
+}
+
 void LuaRunner::InjectWindowProcess(HWND hnd){
 
     auto pszDllFileName = QCoreApplication::applicationDirPath() + "/gg.dll";
